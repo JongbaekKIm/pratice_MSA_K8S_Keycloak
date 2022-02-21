@@ -1,0 +1,28 @@
+# This workflow will build a Java project with Maven
+# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
+
+name: Java CI with Maven develop & master Branch
+
+on:
+  pull_request:
+    branches:
+      - develop
+      - master
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up JDK 17
+      uses: actions/setup-java@v1
+      with:
+        java-version: 17
+    - name: Build 3CN Modules
+      run: mvn clean install -DskipTests --file common/pom.xml
+    - name: Build 3CN Parent
+      run: mvn clean install -N -DskipTests --file pom.xml
+    - name: Build 3CN Whole Project
+      run: mvn -B package -DskipTests --file pom.xml

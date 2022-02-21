@@ -1,0 +1,9 @@
+/.metadata/
+.idea
+.vscode
+/currency-conversion-client
+/currency-conversion-api
+/CC-DTO
+/CC-Exception
+*.iml
+/localtunnel

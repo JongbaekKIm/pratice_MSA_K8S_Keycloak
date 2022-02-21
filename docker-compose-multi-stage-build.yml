@@ -1,0 +1,136 @@
+version: '3.2'
+services:
+    api-gateway:
+        container_name: api-gateway
+        build:
+            context: api-gateway
+            args:
+                APP_VERSION: $APP_VERSION
+            dockerfile: Dockerfile.multistage
+        expose:
+            - 8755
+        ports:
+            - 8755:8755
+        volumes:
+            - cloud-native-volume:/tmp
+        networks:
+            - envcn_cloud-native-network
+    currency-exchnage:
+        container_name: c-exchnage
+        build:
+            context: currency-exchange
+            args:
+                APP_VERSION: $APP_VERSION
+            dockerfile: Dockerfile.multistage
+        expose:
+            - 8000
+        ports:
+            - 8000:8000
+        volumes:
+            - cloud-native-volume:/tmp
+        networks:
+            - envcn_cloud-native-network
+        depends_on:
+            - api-gateway
+    math:
+        container_name: math
+        build:
+            context: math
+            args:
+                APP_VERSION: $APP_VERSION
+            dockerfile: Dockerfile.multistage
+        expose:
+            - 8100
+        ports:
+            - 8100:8100
+        volumes:
+            - cloud-native-volume:/tmp
+        networks:
+            - envcn_cloud-native-network
+        depends_on:
+            - api-gateway
+    country:
+        container_name: country
+        build:
+            context: country
+            args:
+                APP_VERSION: $APP_VERSION
+            dockerfile: Dockerfile.multistage
+        expose:
+            - 8300
+        ports:
+            - 8300:8300
+        volumes:
+            - cloud-native-volume:/tmp
+        networks:
+            - envcn_cloud-native-network
+        depends_on:
+            - api-gateway
+    currency-conversion:
+        container_name: currency-conversion
+        build:
+            context: currency-conversion
+            args:
+                APP_VERSION: $APP_VERSION
+            dockerfile: Dockerfile.multistage
+        expose:
+            - 5200
+        ports:
+            - 5200:5200
+        volumes:
+            - cloud-native-volume:/tmp
+        networks:
+            - envcn_cloud-native-network
+        depends_on:
+            - api-gateway
+    user:
+        container_name: user
+        build:
+            context: user
+            args:
+                APP_VERSION: $APP_VERSION
+            dockerfile: Dockerfile.multistage
+        expose:
+            - 8900
+        ports:
+            - 8900:8900
+        volumes:
+            - cloud-native-volume:/tmp
+        networks:
+            - envcn_cloud-native-network
+        depends_on:
+            - api-gateway
+    audit:
+        container_name: audit
+        build:
+            context: audit
+            args:
+                APP_VERSION: $APP_VERSION
+            dockerfile: Dockerfile.multistage
+        expose:
+            - 8950
+        ports:
+            - 8950:8950
+        volumes:
+            - cloud-native-volume:/tmp
+        networks:
+            - envcn_cloud-native-network
+        depends_on:
+            - api-gateway
+    ui:
+        container_name: ui
+        build:
+            context: ./clients/3cn-react-client/
+            args:
+                ENV: dev
+        depends_on:
+            - currency-conversion
+        ports:
+            - '3000:80'
+        networks:
+            - envcn_cloud-native-network
+volumes:
+    cloud-native-volume:
+networks:
+    envcn_cloud-native-network:
+        external: true
